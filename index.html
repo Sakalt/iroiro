@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Spinner Game</title>
+    <style>
+        #spinner {
+            width: 500px;
+            height: 500px;
+            background-image: url('handspinner1.png');
+            background-size: cover;
+            transition: transform 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="spinner"></div>
+    <button onclick="spin()">回す</button>
+
+    <script>
+        let rotation = 0;
+        let speed = 0;
+        let deceleration = 0.01;
+
+        function spin() {
+            speed += 5; // ボタンをクリックで加速
+        }
+
+        function update() {
+            rotation += speed;
+            speed -= deceleration;
+
+            if (speed < 0) {
+                speed = 0;
+            }
+
+            document.getElementById("spinner").style.transform = `rotate(${rotation}deg)`;
+
+            if (rotation % 360 < 180) {
+                document.getElementById("spinner").style.backgroundImage = "url('handspinner1.png')";
+            } else {
+                document.getElementById("spinner").style.backgroundImage = "url('handspinner2.png')";
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
