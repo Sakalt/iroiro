@@ -11,20 +11,32 @@
             background-image: url('handspinner1.png');
             background-size: cover;
             transition: transform 0.1s linear;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div id="spinner"></div>
     <button onclick="spin()">回す</button>
+    <button onclick="toggleImage()">画像切り替え</button>
 
     <script>
         let rotation = 0;
         let speed = 0;
         let deceleration = 0.01;
+        let isImageOne = true;
 
         function spin() {
             speed += 5; // ボタンをクリックで加速
+        }
+
+        function toggleImage() {
+            if (isImageOne) {
+                document.getElementById("spinner").style.backgroundImage = "url('handspinner2.png')";
+            } else {
+                document.getElementById("spinner").style.backgroundImage = "url('handspinner1.png')";
+            }
+            isImageOne = !isImageOne;
         }
 
         function update() {
@@ -36,12 +48,6 @@
             }
 
             document.getElementById("spinner").style.transform = `rotate(${rotation}deg)`;
-
-            if (rotation % 360 < 180) {
-                document.getElementById("spinner").style.backgroundImage = "url('handspinner1.png')";
-            } else {
-                document.getElementById("spinner").style.backgroundImage = "url('handspinner2.png')";
-            }
 
             requestAnimationFrame(update);
         }
