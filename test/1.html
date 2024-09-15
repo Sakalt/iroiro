@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sakalt/os-hotal リポジトリ埋め込み</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        #github-widget {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: #f7f7f7; /* 背景色を調整 */
+        }
+        .widget-container {
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="github-widget">
+        <div class="widget-container" id="github-widget-container">
+            <!-- GitHub Widget will be inserted here -->
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/gh/syedowaisali/github-widget@latest/widget.js"></script>
+    <script>
+        githubWidget.init({
+            username: "sakalt",       // GitHubユーザー名
+            repo: "os-hotal",         // リポジトリ名
+            selector: "#github-widget-container",  // ウィジェットを表示する場所
+            repoSort: "stars",        // リポジトリのソート順（stars, forks, updated）
+            limit: 1                  // 表示するリポジトリ数（1つだけ表示）
+        });
+    </script>
+</body>
+</html>
