@@ -1,1 +1,1 @@
-https://sakalt.github.io/iroirno/browser.html
+https://sakalt.github.io/iroiro/browser.html
