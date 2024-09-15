@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルブラウザ</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            background: var(--header-bg);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .tabs {
+            display: flex;
+            align-items: center;
+            margin-right: auto;
+        }
+        .tab {
+            padding: 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            margin-right: 2px;
+            background: var(--tab-bg);
+        }
+        .tab.active {
+            background: var(--tab-active-bg);
+            border-bottom: none;
+        }
+        .tab + .tab:before {
+            content: '+';
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .address-bar {
+            flex: 1;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .address-bar input {
+            width: calc(100% - 60px);
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .address-bar button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: var(--button-bg);
+        }
+        .address-bar button:hover {
+            background: var(--button-hover-bg);
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+        .button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: var(--button-bg);
+        }
+        .button:hover {
+            background: var(--button-hover-bg);
+        }
+        .content {
+            flex: 1;
+            overflow: auto;
+            background: var(--content-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --header-bg: #1f1f1f;
+            --tab-bg: #333;
+            --tab-active-bg: #555;
+            --button-bg: #444;
+            --button-hover-bg: #666;
+            --content-bg: #1e1e1e;
+        }
+        .light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --header-bg: #f5f5f5;
+            --tab-bg: #e0e0e0;
+            --tab-active-bg: #cccccc;
+            --button-bg: #dddddd;
+            --button-hover-bg: #bbbbbb;
+            --content-bg: #ffffff;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="container">
+        <div class="header">
+            <div class="tabs">
+                <div class="tab active">タブ 1</div>
+                <div class="tab">+ タブ追加</div>
+            </div>
+            <div class="address-bar">
+                <input type="text" id="urlInput" placeholder="URLを入力...">
+                <button onclick="loadUrl()">飛ぶ</button>
+            </div>
+            <div class="controls">
+                <div class="button" onclick="goBack()">戻る</div>
+                <div class="button" onclick="goForward()">進む</div>
+                <div class="button" onclick="refresh()">更新</div>
+                <div class="button" onclick="toggleMode()">モード切替</div>
+            </div>
+        </div>
+        <div class="content">
+            <iframe id="contentFrame" src=""></iframe>
+        </div>
+    </div>
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const addressBar = document.getElementById('urlInput');
+        const contentFrame = document.getElementById('contentFrame');
+        const body = document.body;
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.innerText === '+ タブ追加') {
+                    addTab();
+                } else {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                }
+            });
+        });
+
+        function addTab() {
+            const newTab = document.createElement('div');
+            newTab.className = 'tab';
+            newTab.innerText = `タブ ${tabs.length + 1}`;
+            document.querySelector('.tabs').insertBefore(newTab, tabs[tabs.length - 1]);
+            newTab.click();
+        }
+
+        function loadUrl() {
+            const url = addressBar.value;
+            if (url) {
+                contentFrame.src = url;
+            }
+        }
+
+        function goBack() {
+            if (contentFrame.contentWindow.history.length > 0) {
+                contentFrame.contentWindow.history.back();
+            } else {
+                alert('戻る履歴がありません');
+            }
+        }
+
+        function goForward() {
+            if (contentFrame.contentWindow.history.length > 0) {
+                contentFrame.contentWindow.history.forward();
+            } else {
+                alert('進む履歴がありません');
+            }
+        }
+
+        function refresh() {
+            contentFrame.contentWindow.location.reload();
+        }
+
+        function toggleMode() {
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+        }
+    </script>
+</body>
+</html>
