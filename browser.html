@@ -52,7 +52,7 @@
             align-items: center;
         }
         .address-bar input {
-            width: calc(100% - 60px);
+            width: calc(100% - 80px);
             padding: 5px;
             border: 1px solid #ddd;
             border-radius: 3px;
@@ -86,9 +86,7 @@
             flex: 1;
             overflow: auto;
             background: var(--content-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 10px;
         }
         .content iframe {
             width: 100%;
@@ -126,7 +124,7 @@
             </div>
             <div class="address-bar">
                 <input type="text" id="urlInput" placeholder="URLを入力...">
-                <button onclick="loadUrl()">飛ぶ</button>
+                <button onclick="fetchUrl()">飛ぶ</button>
             </div>
             <div class="controls">
                 <div class="button" onclick="goBack()">戻る</div>
@@ -135,15 +133,18 @@
                 <div class="button" onclick="toggleMode()">モード切替</div>
             </div>
         </div>
-        <div class="content">
-            <embed id="contentFrame" src=""></embed>
+        <div id="content" class="content">
+            <!-- コンテンツ表示領域 -->
         </div>
     </div>
+
     <script>
         const tabs = document.querySelectorAll('.tab');
         const addressBar = document.getElementById('urlInput');
-        const contentFrame = document.getElementById('contentFrame');
+        const content = document.getElementById('content');
         const body = document.body;
+        let historyStack = [];
+        let historyIndex = -1;
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -164,31 +165,54 @@
             newTab.click();
         }
 
-        function loadUrl() {
+        function fetchUrl() {
             const url = addressBar.value;
             if (url) {
-                contentFrame.src = url;
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text(); // HTMLなどのテキストとしてデータを取得
+                    })
+                    .then(data => {
+                        content.innerHTML = data; // 取得したデータを<div>に表示
+                        // 履歴管理
+                        historyStack = historyStack.slice(0, historyIndex + 1);
+                        historyStack.push(url);
+                        historyIndex = historyStack.length - 1;
+                    })
+                    .catch(error => {
+                        console.error('データ取得エラー:', error);
+                        content.innerHTML = 'データを取得できませんでした。';
+                    });
             }
         }
 
         function goBack() {
-            if (contentFrame.contentWindow.history.length > 0) {
-                contentFrame.contentWindow.history.back();
+            if (historyIndex > 0) {
+                historyIndex--;
+                const url = historyStack[historyIndex];
+                addressBar.value = url;
+                fetchUrl();
             } else {
                 alert('戻る履歴がありません');
             }
         }
 
         function goForward() {
-            if (contentFrame.contentWindow.history.length > 0) {
-                contentFrame.contentWindow.history.forward();
+            if (historyIndex < historyStack.length - 1) {
+                historyIndex++;
+                const url = historyStack[historyIndex];
+                addressBar.value = url;
+                fetchUrl();
             } else {
                 alert('進む履歴がありません');
             }
         }
 
         function refresh() {
-            contentFrame.contentWindow.location.reload();
+            fetchUrl();
         }
 
         function toggleMode() {
