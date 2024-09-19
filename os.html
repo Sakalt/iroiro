@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cheerpX ISO Loader</title>
+    <script src="https://cheerpxdemos.leaningtech.com/publicdeploy/20240820_158/cx.js"></script> <!-- cheerpXのライブラリを追加 -->
+</head>
+<body>
+    <h1>cheerpX ISO Loader</h1>
+    <script type="module">
+        async function setupCheerpX() {
+            const cx = await CheerpXApp.create({
+                devices: [
+                    {
+                        name: "block1",
+                        type: "block",
+                        url: "image.iso", // ISOファイルのURLを指定
+                    },
+                ],
+                mounts: [
+                    { type: "iso", dev: "block1", path: "/" }, // ISOファイルをルートパスにマウント
+                    { type: "cheerpOS", dev: "/app", path: "/app" },
+                    { type: "cheerpOS", dev: "/str", path: "/data" },
+                    { type: "devs", dev: "", path: "/dev" },
+                ],
+            });
+
+            // その他の設定やアプリケーションの初期化
+            console.log('cheerpX environment setup complete');
+        }
+
+        setupCheerpX().catch(error => console.error('Error setting up cheerpX:', error));
+    </script>
+</body>
+</html>
