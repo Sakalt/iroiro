@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cheerpX ISO Loader</title>
     <script src="https://cheerpxdemos.leaningtech.com/publicdeploy/20240820_158/cx.js"></script> <!-- cheerpXのライブラリを追加 -->
+    <style>
+        #console {
+            white-space: pre-wrap; /* スペースと改行を保持する */
+            font-family: monospace;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>cheerpX ISO Loader</h1>
+    <pre id="console"></pre>
     <script type="module">
         async function setupCheerpX() {
             const cx = await CheerpXApp.create({
@@ -26,8 +37,28 @@
                 ],
             });
 
-            // その他の設定やアプリケーションの初期化
-            console.log('cheerpX environment setup complete');
+            // コンソールの設定
+            cx.setConsole(document.getElementById("console"));
+
+            // コマンドの実行
+            try {
+                await cx.run("/bin/bash", ["--login"], {
+                    env: [
+                        "HOME=/home/user",
+                        "USER=user",
+                        "SHELL=/bin/bash",
+                        "EDITOR=vim",
+                        "LANG=en_US.UTF-8",
+                        "LC_ALL=C",
+                    ],
+                    cwd: "/home/user",
+                    uid: 1000,
+                    gid: 1000,
+                });
+                console.log('Command executed successfully');
+            } catch (error) {
+                console.error('Error executing command:', error);
+            }
         }
 
         setupCheerpX().catch(error => console.error('Error setting up cheerpX:', error));
