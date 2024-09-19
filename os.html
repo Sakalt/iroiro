@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cheerpX ISO Loader</title>
-    <script src="https://cheerpxdemos.leaningtech.com/publicdeploy/20240820_158/cx.js"></script> <!-- cheerpXのライブラリを追加 -->
+    <script src="https://cheerpxdemos.leaningtech.com/publicdeploy/20240820_158/cx.js"></script>
     <style>
         #console {
-            white-space: pre-wrap; /* スペースと改行を保持する */
+            white-space: pre-wrap;
             font-family: monospace;
             border: 1px solid #ccc;
             padding: 10px;
@@ -15,6 +15,8 @@
             overflow-y: auto;
         }
     </style>
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 </head>
 <body>
     <h1>cheerpX ISO Loader</h1>
@@ -26,11 +28,11 @@
                     {
                         name: "block1",
                         type: "block",
-                        url: "https://raw.githubusercontent.com/Sakalt/iroiro/main/image.iso", // ISOファイルのURLを指定
+                        url: "https://raw.githubusercontent.com/Sakalt/iroiro/main/image.iso",
                     },
                 ],
                 mounts: [
-                    { type: "iso", dev: "block1", path: "/" }, // ISOファイルをルートパスにマウント
+                    { type: "iso", dev: "block1", path: "/" },
                     { type: "cheerpOS", dev: "/app", path: "/app" },
                     { type: "cheerpOS", dev: "/str", path: "/data" },
                     { type: "devs", dev: "", path: "/dev" },
