@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainf**k Interpreter with Input</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        textarea { width: 100%; height: 150px; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
+        button { padding: 10px 15px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Brainf**k Interpreter</h1>
+    <textarea id="code" placeholder="Brainf**kコードを入力してください"></textarea><br><br>
+    <button onclick="runBrainfuck()">実行</button>
+    <p><strong>出力:</strong></p>
+    <pre id="output"></pre>
+
+    <script>
+        function runBrainfuck() {
+            const code = document.getElementById('code').value.trim();
+            const outputElem = document.getElementById('output');
+            const memory = new Uint8Array(30000); // メモリセル30000個
+            let pointer = 0;
+            let output = '';
+            let loopStack = [];
+
+            const codeLength = code.length;
+            let inputIndex = 0;
+            let inputValues = prompt("Brainf**kの入力を文字列で入力してください:") || "";
+
+            // Brainf**kコードの実行
+            for (let i = 0; i < codeLength; i++) {
+                const command = code[i];
+
+                switch (command) {
+                    case '>': // ポインタを右に移動
+                        pointer = (pointer + 1) % 30000;
+                        break;
+                    case '<': // ポインタを左に移動
+                        pointer = (pointer - 1 + 30000) % 30000;
+                        break;
+                    case '+': // メモリセルの値をインクリメント
+                        memory[pointer] = (memory[pointer] + 1) % 256;
+                        break;
+                    case '-': // メモリセルの値をデクリメント
+                        memory[pointer] = (memory[pointer] - 1 + 256) % 256;
+                        break;
+                    case '.': // 現在のメモリセルの値を出力
+                        output += String.fromCharCode(memory[pointer]);
+                        break;
+                    case ',': // ユーザーからの入力を受け付け
+                        if (inputIndex < inputValues.length) {
+                            memory[pointer] = inputValues.charCodeAt(inputIndex);
+                            inputIndex++;
+                        } else {
+                            memory[pointer] = 0; // 入力がない場合、0に設定
+                        }
+                        break;
+                    case '[': // ループの開始
+                        if (memory[pointer] === 0) {
+                            let openBrackets = 1;
+                            while (openBrackets > 0) {
+                                i++;
+                                if (code[i] === '[') openBrackets++;
+                                if (code[i] === ']') openBrackets--;
+                            }
+                        } else {
+                            loopStack.push(i);
+                        }
+                        break;
+                    case ']': // ループの終了
+                        if (memory[pointer] !== 0) {
+                            i = loopStack[loopStack.length - 1];
+                        } else {
+                            loopStack.pop();
+                        }
+                        break;
+                    default:
+                        // Brainf**k以外の文字は無視
+                        break;
+                }
+            }
+
+            outputElem.textContent = output || '（出力なし）';
+        }
+    </script>
+</body>
+</html>
