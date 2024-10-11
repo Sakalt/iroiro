@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini4WD in Three.js</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 回転用のボタンを追加 -->
+    <div id="controls">
+        <button id="rotateLeft">左回転</button>
+        <button id="rotateRight">右回転</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // シーン、カメラ、レンダラーの設定
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // ライトの設定
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+
+        // シャーシを作成 (ばってん型)
+        const chassisGeometry = new THREE.BoxGeometry(6, 0.5, 12); // メインの長方形部分
+        const chassisMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
+        const chassis = new THREE.Mesh(chassisGeometry, chassisMaterial);
+        scene.add(chassis);
+
+        // X型にバーを追加
+        const crossBarGeometry = new THREE.BoxGeometry(12, 0.5, 0.5);
+        const crossBar1 = new THREE.Mesh(crossBarGeometry, chassisMaterial);
+        const crossBar2 = new THREE.Mesh(crossBarGeometry, chassisMaterial);
+        crossBar1.rotation.z = Math.PI / 4;
+        crossBar2.rotation.z = -Math.PI / 4;
+        chassis.add(crossBar1);
+        chassis.add(crossBar2);
+
+        // モーターの追加（中央）
+        const motorGeometry = new THREE.CylinderGeometry(1, 1, 3, 32);
+        const motorMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        const motor = new THREE.Mesh(motorGeometry, motorMaterial);
+        motor.rotation.z = Math.PI / 2;
+        motor.position.set(0, 1, 0);
+        chassis.add(motor);
+
+        // タイヤの作成
+        function createTire() {
+            const tireGeometry = new THREE.TorusGeometry(1.2, 0.5, 16, 100);
+            const tireMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
+            const tire = new THREE.Mesh(tireGeometry, tireMaterial);
+
+            // 溝を追加するように見せるための簡単な凹凸
+            const grooveGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.2, 32);
+            const grooveMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            const grooves = new THREE.Group();
+            for (let i = 0; i < 6; i++) {
+                const groove = new THREE.Mesh(grooveGeometry, grooveMaterial);
+                groove.rotation.x = Math.PI / 2;
+                groove.position.set(0, 0.5, 1.2 * Math.sin(i * Math.PI / 3));
+                tire.add(groove);
+            }
+
+            return tire;
+        }
+
+        // タイヤの配置
+        const tires = [];
+        const positions = [
+            [-3.5, 0, 5],
+            [3.5, 0, 5],
+            [-3.5, 0, -5],
+            [3.5, 0, -5]
+        ];
+
+        positions.forEach(pos => {
+            const tire = createTire();
+            tire.position.set(pos[0], pos[1], pos[2]);
+            tires.push(tire);
+            scene.add(tire);
+        });
+
+        // カメラ位置
+        camera.position.z = 20;
+
+        // 回転速度の変数
+        let rotationSpeed = 0;
+
+        // ボタンのイベントリスナー
+        document.getElementById('rotateLeft').addEventListener('click', () => {
+            rotationSpeed = 0.05; // 左回転
+        });
+
+        document.getElementById('rotateRight').addEventListener('click', () => {
+            rotationSpeed = -0.05; // 右回転
+        });
+
+        // アニメーションループ
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 車体を回転させる
+            chassis.rotation.y += rotationSpeed;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
