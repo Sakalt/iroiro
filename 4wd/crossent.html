@@ -23,6 +23,8 @@
 <body>
     <!-- 回転用のボタンを追加 -->
     <div id="controls">
+        <button id="rotateUp">上回転</button>
+        <button id="rotateDown">下回転</button>
         <button id="rotateLeft">左回転</button>
         <button id="rotateRight">右回転</button>
     </div>
@@ -104,15 +106,24 @@
         camera.position.z = 20;
 
         // 回転速度の変数
-        let rotationSpeed = 0;
+        let rotateX = 0;
+        let rotateY = 0;
 
         // ボタンのイベントリスナー
+        document.getElementById('rotateUp').addEventListener('click', () => {
+            rotateX = -0.05; // 上回転
+        });
+
+        document.getElementById('rotateDown').addEventListener('click', () => {
+            rotateX = 0.05; // 下回転
+        });
+
         document.getElementById('rotateLeft').addEventListener('click', () => {
-            rotationSpeed = 0.05; // 左回転
+            rotateY = 0.05; // 左回転
         });
 
         document.getElementById('rotateRight').addEventListener('click', () => {
-            rotationSpeed = -0.05; // 右回転
+            rotateY = -0.05; // 右回転
         });
 
         // アニメーションループ
@@ -120,7 +131,12 @@
             requestAnimationFrame(animate);
 
             // 車体を回転させる
-            chassis.rotation.y += rotationSpeed;
+            chassis.rotation.x += rotateX;
+            chassis.rotation.y += rotateY;
+
+            // 回転をリセット
+            rotateX = 0;
+            rotateY = 0;
 
             renderer.render(scene, camera);
         }
