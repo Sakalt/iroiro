@@ -111,19 +111,19 @@
 
         // ボタンのイベントリスナー
         document.getElementById('rotateUp').addEventListener('click', () => {
-            rotateX = -0.05; // 上回転
+            rotateX = -0.1; // 上回転
         });
 
         document.getElementById('rotateDown').addEventListener('click', () => {
-            rotateX = 0.05; // 下回転
+            rotateX = 0.1; // 下回転
         });
 
         document.getElementById('rotateLeft').addEventListener('click', () => {
-            rotateY = 0.05; // 左回転
+            rotateY = 0.1; // 左回転
         });
 
         document.getElementById('rotateRight').addEventListener('click', () => {
-            rotateY = -0.05; // 右回転
+            rotateY = -0.1; // 右回転
         });
 
         // アニメーションループ
@@ -133,6 +133,8 @@
             // 車体を回転させる
             chassis.rotation.x += rotateX;
             chassis.rotation.y += rotateY;
+            tire.rotation.x += rotateX;
+            tire.rotation.y += rotateY;
 
             // 回転をリセット
             rotateX = 0;
