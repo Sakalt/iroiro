@@ -43,11 +43,15 @@
         light.position.set(5, 5, 5);
         scene.add(light);
 
+        // 車体グループを作成（すべての部品を含むグループ）
+        const carGroup = new THREE.Group();
+        scene.add(carGroup);
+
         // シャーシを作成 (ばってん型)
         const chassisGeometry = new THREE.BoxGeometry(6, 0.5, 12); // メインの長方形部分
         const chassisMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
         const chassis = new THREE.Mesh(chassisGeometry, chassisMaterial);
-        scene.add(chassis);
+        carGroup.add(chassis);
 
         // X型にバーを追加
         const crossBarGeometry = new THREE.BoxGeometry(12, 0.5, 0.5);
@@ -71,70 +75,98 @@
             const tireGeometry = new THREE.TorusGeometry(1.2, 0.5, 16, 100);
             const tireMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
             const tire = new THREE.Mesh(tireGeometry, tireMaterial);
-
-            // 溝を追加するように見せるための簡単な凹凸
-            const grooveGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.2, 32);
-            const grooveMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-            const grooves = new THREE.Group();
-            for (let i = 0; i < 6; i++) {
-                const groove = new THREE.Mesh(grooveGeometry, grooveMaterial);
-                groove.rotation.x = Math.PI / 2;
-                groove.position.set(0, 0.5, 1.2 * Math.sin(i * Math.PI / 3));
-                tire.add(groove);
-            }
-
             return tire;
         }
 
-        // タイヤの配置
-        const tires = [];
-        const positions = [
+        // カスタムホイールの作成
+        function createCustomWheel() {
+            const wheelGeometry = new THREE.BufferGeometry();
+            const vertices = [];
+
+            const outerRadius = 1.2;
+            const innerRadius = 0.4;
+            const numSpokes = 5;
+            const thickness = 0.3;
+
+            // スポークと外周を作成
+            for (let i = 0; i < numSpokes; i++) {
+                const angle = (i / numSpokes) * Math.PI * 2;
+
+                // 中央から外周までのスポークを作成
+                const x1 = Math.cos(angle) * innerRadius;
+                const y1 = Math.sin(angle) * innerRadius;
+                const x2 = Math.cos(angle) * outerRadius;
+                const y2 = Math.sin(angle) * outerRadius;
+
+                // スポークの両側の頂点
+                vertices.push(x1, y1, thickness);
+                vertices.push(x2, y2, thickness);
+                vertices.push(x1, y1, -thickness);
+
+                vertices.push(x2, y2, thickness);
+                vertices.push(x2, y2, -thickness);
+                vertices.push(x1, y1, -thickness);
+            }
+
+            const positions = new Float32Array(vertices);
+            wheelGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, side: THREE.DoubleSide });
+            const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            wheel.rotation.x = Math.PI / 2; // ホイールを垂直に配置
+
+            return wheel;
+        }
+
+        // タイヤとホイールの配置
+        const tirePositions = [
             [-3.5, 0, 5],
             [3.5, 0, 5],
             [-3.5, 0, -5],
             [3.5, 0, -5]
         ];
 
-        positions.forEach(pos => {
+        tirePositions.forEach(pos => {
             const tire = createTire();
             tire.position.set(pos[0], pos[1], pos[2]);
-            tires.push(tire);
-            scene.add(tire);
+            carGroup.add(tire);
+
+            const wheel = createCustomWheel();
+            wheel.position.set(pos[0], pos[1], pos[2]);
+            carGroup.add(wheel);
         });
 
         // カメラ位置
         camera.position.z = 20;
 
-        // 回転速度の変数
+        // 回転速度の変数 (2倍に設定)
         let rotateX = 0;
         let rotateY = 0;
 
         // ボタンのイベントリスナー
         document.getElementById('rotateUp').addEventListener('click', () => {
-            rotateX = -0.1; // 上回転
+            rotateX = -0.1; // 上回転 (2倍速度)
         });
 
         document.getElementById('rotateDown').addEventListener('click', () => {
-            rotateX = 0.1; // 下回転
+            rotateX = 0.1; // 下回転 (2倍速度)
         });
 
         document.getElementById('rotateLeft').addEventListener('click', () => {
-            rotateY = 0.1; // 左回転
+            rotateY = 0.1; // 左回転 (2倍速度)
         });
 
         document.getElementById('rotateRight').addEventListener('click', () => {
-            rotateY = -0.1; // 右回転
+            rotateY = -0.1; // 右回転 (2倍速度)
         });
 
         // アニメーションループ
         function animate() {
             requestAnimationFrame(animate);
 
-            // 車体を回転させる
-            chassis.rotation.x += rotateX;
-            chassis.rotation.y += rotateY;
-            tire.rotation.x += rotateX;
-            tire.rotation.y += rotateY;
+            // 車体全体を回転させる
+            carGroup.rotation.x += rotateX;
+            carGroup.rotation.y += rotateY;
 
             // 回転をリセット
             rotateX = 0;
