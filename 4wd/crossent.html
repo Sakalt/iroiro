@@ -111,7 +111,7 @@
             const positions = new Float32Array(vertices);
             wheelGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, side: THREE.DoubleSide });
+            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xdd0000, side: THREE.DoubleSide });
             const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel.rotation.x = Math.PI / 2; // ホイールを垂直に配置
 
