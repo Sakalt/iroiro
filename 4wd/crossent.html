@@ -70,11 +70,12 @@
         motor.position.set(0, 1, 0);
         chassis.add(motor);
 
-        // タイヤの作成
+        // タイヤの作成 (溝あり)
         function createTire() {
             const tireGeometry = new THREE.TorusGeometry(1.2, 0.5, 16, 100);
             const tireMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
             const tire = new THREE.Mesh(tireGeometry, tireMaterial);
+            tire.rotation.x = Math.PI / 2; // タイヤを正しい方向に回転
             return tire;
         }
 
@@ -111,9 +112,9 @@
             const positions = new Float32Array(vertices);
             wheelGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xdd0000, side: THREE.DoubleSide });
+            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFF00, side: THREE.DoubleSide }); // 黄色に設定
             const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel.rotation.x = Math.PI / 2; // ホイールを垂直に配置
+            wheel.rotation.x = Math.PI / 2; // ホイールを正しい方向に回転
 
             return wheel;
         }
