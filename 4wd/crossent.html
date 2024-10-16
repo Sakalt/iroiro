@@ -114,7 +114,7 @@
 
             const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFF00, side: THREE.DoubleSide }); // 黄色に設定
             const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel.rotation.x = Math.PI / 2; // ホイールを正しい方向に回転
+            wheel.rotation.y = Math.PI / 2; // ホイールを正しい方向に回転
 
             return wheel;
         }
