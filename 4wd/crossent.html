@@ -75,7 +75,7 @@
             const tireGeometry = new THREE.TorusGeometry(1.2, 0.5, 16, 100);
             const tireMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
             const tire = new THREE.Mesh(tireGeometry, tireMaterial);
-            tire.rotation.x = Math.PI / 2; // タイヤを正しい方向に回転
+            tire.rotation.y = Math.PI / 2; // タイヤを縦向きに回転 (Y軸で回転)
             return tire;
         }
 
@@ -114,7 +114,7 @@
 
             const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFF00, side: THREE.DoubleSide }); // 黄色に設定
             const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel.rotation.x = 180 // ホイールを正しい方向に回転
+            wheel.rotation.y = Math.PI / 2; // ホイールを縦向きに回転 (Y軸で回転)
 
             return wheel;
         }
